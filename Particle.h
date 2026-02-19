@@ -1,6 +1,6 @@
 #pragma once
-#include <cstdint>
-enum ParticleType {
+#include  <cstdint>
+enum class ParticleType {
 		AIR,
 		DUST,
 		FIRE,
@@ -10,7 +10,7 @@ enum ParticleType {
 		LIGHTNING
 
 };
-
+class World;
 class Particle {
 
 	private:
@@ -31,5 +31,10 @@ class Particle {
 	float getRow() const;
 	float getCol() const;
 	ParticleType getType() const;
+	
+
+	//core logic stuff, i forward declared world to pass it as a reference so we can cehck surrondings
+	void physics(World& world);
+	void touch(Particle& other);
 
 };
