@@ -149,3 +149,59 @@ On the final date, you will present your project before the class and all bullet
 Grading is simple - whatever percentage of the bullet points your group did is the grade everyone in the group gets, with individual grades only for people who did too much or too little.
 
 Extra credit will be awarded liberally. Add more particle types, compose some music for it, go wild. Impress me and you will not only get above 100%, but you will become infamous. (That's better than just being famous.)
+
+
+
+
+
+
+McKay Seamons - 
+
+A position (.row, .col float) which indicates where it is on the screen 
+
+A velocity (.x_vel and .y_vel float) indicating how many cells per tick it moves 
+
+A .type which must be an enum which indicates if it is air, dust, fire, water, earth, dirt, lightning 
+
+Color (.r .g .b uint8_t) that should be set initially by its type (fire should be red) but can change 
+
+A boolean named .stationary that if true means it is solid and does not move/simulate physics  (Note: Implemented as bool moving in your header).
+
+A .lifetime variable which holds how many frames more it will exist for 
+
+Member variables must be in the private section, methods in the public section 
+
+Make the usual constructors, getters/setters, and so forth. 
+
+A .physics() method that gets the world map passed in by reference, that runs physics for the particle and updates the world map if it moved. 
+
+A .touch() method that gets called when another particle touches it. 
+
+A size (.rows .cols int) that is the boundary of the world. 
+
+A map (rows x cols in size of chars) which indicates which particle type (or nothing) is at each place in the game world 
+
+A list (must be std::list) of Particles which holds all particles in the world 
+
+An .at(row,col) method that returns a pointer to the Particle at the location row x col in the world (or nullptr if there is no particle there) 
+
+A .physics() method which runs through the list of Particles and runs .physics() on each one 
+
+A .size() method which returns how many particles are in the world 
+
+A .alive_count() method which returns how many particles with lifetime > 0 are in the world 
+
+A .save() method which saves the state of the world to disk 
+
+A .load() method which loads the state of the world to disk 
+
+It has the world (.world World) as a member variable 
+
+A .frame member variable that starts at 0 and counts up by 1 each time physics is run 
+
+A .render() method which draws all the particles in the list to the screen using their position and color 
+
+A .run() method that starts the game. 
+
+Your main() function should just be this: Game game; game.run();
+
