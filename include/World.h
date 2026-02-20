@@ -15,10 +15,16 @@ class World {
 	public:
 	World(int r, int c);
 	Particle* at(int r, int c); //should return nullptr if empty
+	
+	int getParticle_Rows() const {
+		return rows; }
+
+	int getParticle_Cols() const {
+		return cols; }
+	
 	int size();		//total particles
 	int alive_count(); //particles with a lifetime of more than 0
 	void physics();
-	
 	void save(string fileName);
 	void load(string fileName);
 	
