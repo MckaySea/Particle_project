@@ -10,7 +10,8 @@ class Game {
 		
 	World world;
 	long frame;
-
+	int frame_count;
+	
 	public:
 
 	Game();
