@@ -18,8 +18,7 @@ class World {
 	int size();		//total particles
 	int alive_count(); //particles with a lifetime of more than 0
 	void physics();
-	
 	void save(string fileName);
 	void load(string fileName);
-	
+
 };
