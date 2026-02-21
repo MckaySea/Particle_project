@@ -25,12 +25,23 @@ void Particle::physics(World& world) {
 		if (!moving) return;
 		switch(type) {
 
-			case ParticleType::AIR:
+			case ParticleType::DUST:
+				//going str8 downwards
+				if(world.at(row + 1, col) == nullptr) {
+					row++;
+				} else if(world.at(row + 1, col - 1) == nullptr) { //down left if straight down is blocked
+					row++;
+					col--;
+				} else if(world.at(row + 1, col + 1) == nullptr) { //down right if down left and str8 down are blocked
+					row++;
+					col++;
+				} else if(world.at(row + 1, col) == nullptr) {
+					world.at(row + 1, col)->touch(*this);
+				}
+				break;
 				//code for dust effect on each particle 
 				//Air moves in a straight line (ignoring gravity) bouncing off solid
-			break;
-
-			case ParticleType::DUST:
+			case ParticleType::AIR:
 				//code to implement that affects each particle for water
 				//Dust has a small amount of gravity and randomly moves left and right every frame
 			break;
