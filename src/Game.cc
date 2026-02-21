@@ -19,6 +19,14 @@ void Game::run() {
 			is_running = false;
 		} else if(input == 'p' || input == 'P'){
 			is_paused = !is_paused;
+		} else if(input == 'f' || input == 'F'){ //speed up frame rate
+			frame_count++;
+		} else if (input == 's' || input == 'S'){ //slow down frame rate
+			frame_count--;
+		} else if (input == 'l' || input == 'L'){ // load the world from disk
+
+		} else if (input == 'm' || input == 'M'){ // save the world to disk
+
 		}
 		if(!is_paused){
 		frame_count++;
