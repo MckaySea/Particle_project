@@ -2,7 +2,7 @@
 #include "/public/colors.h"
 
 //just initilizing the world with temp dimensions, should be changed
-Game::Game() : world(50, 50) {
+Game::Game() : world(50, 50) {	
 
 }
 
