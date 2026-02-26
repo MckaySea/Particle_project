@@ -32,6 +32,12 @@ void Game::run() {
 		} else if (input == 'm' || input == 'M'){ // save the world to disk
 			save_world();
 		}
+		else if (input == 'd' || input == 'D') { //draws world on BRIDGES
+			//insert draw world on bridges function
+			if (world.alive_count() == 0) {
+				is_paused = true;
+			}
+		}
 		if(!is_paused){
 		frame_count++;
 		}
