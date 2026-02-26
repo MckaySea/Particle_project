@@ -66,10 +66,10 @@ void World::load() { //load world from disk
 
 	while (in >> type_val >> pr >> pc >> vx >> vy >> r_val >> g_val >> b_val >> stat_val >> life) {
 		Particle p(static_cast<ParticleType>(type_val), pr, pc);
-		p.setXVel(vx);
-		p.setYVel(vy);
+		p.setX_Vel(vx);
+		p.setY_Vel(vy);
 		p.setRGB(r_val, g_val, b_val);
-		p.setStationary(stat_val);
+		p.set_stationary(stat_val);
 		p.setLifetime(life);
 
 		particles.push_back(p);
@@ -87,10 +87,10 @@ void World::save() { //save world to disk
 	for (const auto& p : particles) {
 		out << static_cast<int>(p.getType()) << " " 
 			<< p.getRow() << " " << p.getCol() << " "
-			<< static_cast<int>(p.getR()) << " "
-			<< static_cast<int>(p.getG()) << " "
-			<< static_cast<int>(p.getB()) << " "
-			<< p.getStationary() << " "
+			<< static_cast<int>(p.getRed()) << " "
+			<< static_cast<int>(p.getGreen()) << " "
+			<< static_cast<int>(p.getBlue()) << " "
+			<< p.get_stationary() << " "
 			<< p.getLifetime() << "\n";
 	}
 	out.close();

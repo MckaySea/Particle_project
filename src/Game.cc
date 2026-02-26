@@ -1,4 +1,5 @@
-#include "Game.h"
+#include "../include/Game.h"
+#include "../include/World.h"
 #include "/public/colors.h"
 
 //just initilizing the world with temp dimensions, should be changed
@@ -6,6 +7,9 @@ Game::Game() : world(50, 50) {
 
 }
 
+void load_world() {
+	
+}
 //this is what main.cc is calling and will be our infinite game loop eventually
 void Game::run() {
 	bool is_running = true;
@@ -24,9 +28,9 @@ void Game::run() {
 		} else if (input == 's' || input == 'S'){ //slow down frame rate
 			frame_count--;
 		} else if (input == 'l' || input == 'L'){ // load the world from disk
-
+			load_world();
 		} else if (input == 'm' || input == 'M'){ // save the world to disk
-
+			save_world();
 		}
 		if(!is_paused){
 		frame_count++;
