@@ -23,7 +23,6 @@ class Particle {
 	} color;
 	bool stationary;
 	int lifetime;   //kerney said use -1 for infinite
-	int gravity;
 
 	public:
 
