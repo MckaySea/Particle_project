@@ -178,25 +178,59 @@ void Particle::physics(World& world) {
 		float next_col = col + x_vel;
 		Particle *hit = world.at((int)next_row, (int)next_col);
 
+		if (hit != nullptr && hit != this) {
+			this->touch(*hit);
+		}
+
 
 		switch(type) {
 
-			case ParticleType::DUST:
-
-			break;
-				//code for dust effect on each particle 
-				//Dust has a small amount of gravity and randomly moves left and right every frame
 			case ParticleType::AIR:
+				next_row = row + y_vel;
+				next_col = col +x_vel;
+				hit = world.at((int)next_row, (int)next_col);
+				if (hit == this) hit == nullptr;
+				if (hit && hit->get_stationary()) {
+					x_vel = -x_vel;
+					y_vel = -y_vel;
+					row += y_vel;
+					col += x_vel;
+				}
+				else if (!hit) {
+					row = next_row;
+					col = next_col;
+				}
+				else {
+					x_vel = -x_vel;
+					y_vel = -y_vel;
+					row += y_vel;
+					col += x_vel;
+				}
+				break;
 
-			break;
-				//code to implement that affects each particle for water
-				//Air moves in a straight line (ignoring gravity) bouncing off solid
-			break;
-
-			case ParticleType::FIRE:
-				//implement code here for air effect
-				//Fire is stationary and shoots sparks of lightning in different directions over time
-			break;
+			case ParticleType::DUST:
+				y_vel += 0.2f;
+				if (y_vel > 1.0f) y_vel = 1.0f;
+				x_vel = (rand() % 3) - 1;
+				next_row = row + y_vel;
+				next_col = col + x_vel;
+				hit = world.at((int)next_row, (int)next_col);
+				if (hit == this) hit == nullptr;
+				if (next_row >= world.getRows()) {
+					y_vel = 0;
+					row = world.getRows() - 1;
+				}
+				else if (!hit) {
+					row = next_row;
+					col = next_col;
+				}
+				else {
+					hit = world.at((int)next_row, (int)col);
+					if (hit == this) hit = nullptr;
+					if (!hit) row = next_row;
+					else y_vel = 0;
+				}
+				break;
 
 			case ParticleType::WATER:
 				//implement code for for dirst effect
