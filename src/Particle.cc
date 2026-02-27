@@ -233,22 +233,72 @@ void Particle::physics(World& world) {
 				break;
 
 			case ParticleType::WATER:
-				//implement code for for dirst effect
-				//Water drips down and if it hits something solid it will slide sideways to find the lowest level. Water touching fire turns into
-				//air moving upwards
-			break;
+				y_vel += 0.5f;
+				if (y_vel > 1.0f) y_vel = 1.0f;
+				next_row = row + y_vel;
+				hit = world.at((int)next_row, (int)col);
+				if (hit == this) hit = nullptr;
+				if (next_row >= world.getRows()) {
+					next_row = world.getRows() - 1;
+					hit = this;
+				}
+				if (!hit) {
+					row = next_row;
+				}
+				else {
+					y_vel = 0;
+					bool left_down = ((int)row + 1 >= world.getRows())
+						? false
+						: (world.at((int)row + 1, (int)col - 1) != nullptr && world.at((int)row + 1, (int)col - 1) != this
+								? false
+								: true);
+					bool right_down = ((int)row + 1 >= world.getRows()) 
+						? false
+						: (world.at((int)row + 1, (int)col + 1) != nullptr && world.at((int)row + 1, (int)col + 1) != this
+								? false
+								: true);
+					bool left = world.at((int)row, (int)col - 1) != nullptr && world.at((int)row, (int)col - 1) != this
+						? false
+						: true;
+					bool right = world.at((int)row, (int)col + 1) != nullptr && world.at((int)row, (int)col + 1) != this
+						? false
+						: true;
 
-			case ParticleType::EARTH:
+					if (left && left_down && right && right_down) {
+						col += (rand() % 2 == 0) ? -1 : 1;
+					}
+					else if (left && left_down) {
+						col -= 1;
+					}
+					else if (right && right_down) {
+						col += 1;
+					}
+					else if (left && right) {
+						col += (rand() % 2 == 0) ? -1 : 1;
+					}
+					else if (left) {
+						col -= 1;
+					}
+					else if (right) {
+						col += 1;
+					}
+					else {
+						//Can't slide left or right downwards
+					}
+				}
+				break;
+
+			case ParticleType::DIRT:
 				//implement code for earth effect
 				//Earth is always stationary and solid
 			break;
 
-			case ParticleType::DIRT:
+			case ParticleType::LIGHTNING:
 				//implement code for the dirt effect
 				//Dirt travels downwards and forms piles when it hits something solid
 			break;
 
-			case ParticleType::LIGHTNING:
+			case ParticleType::EARTH:
 				//implement code for the lightning effect
 				//Dirt travels downwards and froms piles when it hits something
 			break;
