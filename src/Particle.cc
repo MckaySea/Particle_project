@@ -178,43 +178,127 @@ void Particle::physics(World& world) {
 		float next_col = col + x_vel;
 		Particle *hit = world.at((int)next_row, (int)next_col);
 
+		if (hit != nullptr && hit != this) {
+			this->touch(*hit);
+		}
+
 
 		switch(type) {
 
-			case ParticleType::DUST:
-
-			break;
-				//code for dust effect on each particle 
-				//Dust has a small amount of gravity and randomly moves left and right every frame
 			case ParticleType::AIR:
+				next_row = row + y_vel;
+				next_col = col +x_vel;
+				hit = world.at((int)next_row, (int)next_col);
+				if (hit == this) hit == nullptr;
+				if (hit && hit->get_stationary()) {
+					x_vel = -x_vel;
+					y_vel = -y_vel;
+					row += y_vel;
+					col += x_vel;
+				}
+				else if (!hit) {
+					row = next_row;
+					col = next_col;
+				}
+				else {
+					x_vel = -x_vel;
+					y_vel = -y_vel;
+					row += y_vel;
+					col += x_vel;
+				}
+				break;
 
-			break;
-				//code to implement that affects each particle for water
-				//Air moves in a straight line (ignoring gravity) bouncing off solid
-			break;
-
-			case ParticleType::FIRE:
-				//implement code here for air effect
-				//Fire is stationary and shoots sparks of lightning in different directions over time
-			break;
+			case ParticleType::DUST:
+				y_vel += 0.2f;
+				if (y_vel > 1.0f) y_vel = 1.0f;
+				x_vel = (rand() % 3) - 1;
+				next_row = row + y_vel;
+				next_col = col + x_vel;
+				hit = world.at((int)next_row, (int)next_col);
+				if (hit == this) hit == nullptr;
+				if (next_row >= world.getRows()) {
+					y_vel = 0;
+					row = world.getRows() - 1;
+				}
+				else if (!hit) {
+					row = next_row;
+					col = next_col;
+				}
+				else {
+					hit = world.at((int)next_row, (int)col);
+					if (hit == this) hit = nullptr;
+					if (!hit) row = next_row;
+					else y_vel = 0;
+				}
+				break;
 
 			case ParticleType::WATER:
-				//implement code for for dirst effect
-				//Water drips down and if it hits something solid it will slide sideways to find the lowest level. Water touching fire turns into
-				//air moving upwards
-			break;
+				y_vel += 0.5f;
+				if (y_vel > 1.0f) y_vel = 1.0f;
+				next_row = row + y_vel;
+				hit = world.at((int)next_row, (int)col);
+				if (hit == this) hit = nullptr;
+				if (next_row >= world.getRows()) {
+					next_row = world.getRows() - 1;
+					hit = this;
+				}
+				if (!hit) {
+					row = next_row;
+				}
+				else {
+					y_vel = 0;
+					bool left_down = ((int)row + 1 >= world.getRows())
+						? false
+						: (world.at((int)row + 1, (int)col - 1) != nullptr && world.at((int)row + 1, (int)col - 1) != this
+								? false
+								: true);
+					bool right_down = ((int)row + 1 >= world.getRows()) 
+						? false
+						: (world.at((int)row + 1, (int)col + 1) != nullptr && world.at((int)row + 1, (int)col + 1) != this
+								? false
+								: true);
+					bool left = world.at((int)row, (int)col - 1) != nullptr && world.at((int)row, (int)col - 1) != this
+						? false
+						: true;
+					bool right = world.at((int)row, (int)col + 1) != nullptr && world.at((int)row, (int)col + 1) != this
+						? false
+						: true;
 
-			case ParticleType::EARTH:
+					if (left && left_down && right && right_down) {
+						col += (rand() % 2 == 0) ? -1 : 1;
+					}
+					else if (left && left_down) {
+						col -= 1;
+					}
+					else if (right && right_down) {
+						col += 1;
+					}
+					else if (left && right) {
+						col += (rand() % 2 == 0) ? -1 : 1;
+					}
+					else if (left) {
+						col -= 1;
+					}
+					else if (right) {
+						col += 1;
+					}
+					else {
+						//Can't slide left or right downwards
+					}
+				}
+				break;
+
+			case ParticleType::DIRT:
 				//implement code for earth effect
 				//Earth is always stationary and solid
 			break;
 
-			case ParticleType::DIRT:
+			case ParticleType::LIGHTNING:
 				//implement code for the dirt effect
 				//Dirt travels downwards and forms piles when it hits something solid
 			break;
 
-			case ParticleType::LIGHTNING:
+			case ParticleType::EARTH:
 				//implement code for the lightning effect
 				//Dirt travels downwards and froms piles when it hits something
 			break;
