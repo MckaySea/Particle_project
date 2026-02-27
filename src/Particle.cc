@@ -131,11 +131,54 @@ void Particle::touch(Particle &other) {
 		this->y_vel = other.getY_Vel();
 	}
 
+	if (this->type == ParticleType::LIGHTNING && other.getType() == ParticleType::EARTH) {
+		other.setParticleType(ParticleType::DIRT);
+		other.setRed(101);
+		other.setGreen(67);
+		other.setBlue(33);
+		other.set_stationary(false);
+		other.setY_Vel(1.0f);
+		other.setLifetime(1000);
+	}
+	else if (this->type == ParticleType::EARTH && other.getType() == ParticleType::LIGHTNING) {
+		this->type = ParticleType::DIRT;
+		this->color.Red = 101;
+		this->color.Green = 67;
+		this->color.Blue = 33;
+		this->stationary = false;
+		this->y_vel = 1.0f;
+		this->lifetime = 1000;
+	}
 }
 
 void Particle::physics(World& world) {
+
 		if (lifetime > 0) lifetime--;
-		if (!stationary) return;
+
+		if (type == ParticleType::FIRE) {
+			if (rand() % 20 == 0 ) {
+				float lx = (rand() % 3) - 1.0f;
+				float ly = (rand() % 3) - 1.0f;
+				if (lx != 0.0f || ly != 0.0f) {
+					int targetRow = (int)(row + ly);
+					int targetCol = (int)(col + lx);
+					if (targetRow >= 0 && targetRow < world.getRows() && targetCol >= 0 && targetCol < world.getCols()) {
+						if (world.at(targetRow, targetCol) == nullptr) {
+							Particle p(targetRow, targetCol, lx * 2.0f, ly * 2.0f, ParticleType::LIGHTNING, 255, 255, 0, false, 15);
+							world.addParticle(p);
+						}
+					}
+				}
+			}
+		}
+
+		if (stationary) return;
+		
+		float next_row = row + y_vel;
+		float next_col = col + x_vel;
+		Particle *hit = world.at((int)next_row, (int)next_col);
+
+
 		switch(type) {
 
 			case ParticleType::DUST:
