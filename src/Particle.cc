@@ -289,17 +289,66 @@ void Particle::physics(World& world) {
 				break;
 
 			case ParticleType::DIRT:
-				//implement code for earth effect
-				//Earth is always stationary and solid
-			break;
+				y_vel += 0.5f;
+				if (y_vel > 1.0f) y_vel = 1.0f;
+				next_row = row + y_vel;
+				hit = world.at((int)next_row, (int)col);
+				if (hit == this) hit == nullptr;
+				if (next_row >= world.getRows()) {
+					next_row = world.getRows() - 1;
+					hit = this;
+				}
+
+				if (!hit) {
+					row = next_row;
+				}
+				else {
+					bool left_down = ((int)row + 1 >= world.getRows()) 
+						? false
+						: (world.at((int)row + 1, (int)col - 1) != nullptr && world.at((int)row + 1, (int)col - 1) != this
+								? false
+								: true);
+					bool right_down = ((int)row + 1 >= world.getRows()) 
+						? false
+						: (world.at((int)row + 1, (int)col + 1) != nullptr && world.at((int)row + 1, (int)col + 1) != this
+								? false
+								: true);
+					bool left = world.at((int)row, (int)col - 1) != nullptr && world.at((int)row, (int)col - 1) != this
+						? false
+						: true;
+					bool right = world.at((int)row, (int)col + 1) != nullptr && world.at((int)row, (int)col + 1) != this
+						? false
+						: true;
+
+					if (left && left_down && right && right_down) {
+						col += (rand() % 2 == 0) ? -1 : 1;
+						row += 1;
+					}
+					else if (left && left_down) {
+						row += 1;
+						col -= 1;
+					}
+					else if (right && right_down) {
+						row += 1;
+						col += 1;
+					}
+					else {
+						stationary = true;
+					}
+				}
+				break;
 
 			case ParticleType::LIGHTNING:
-				//implement code for the dirt effect
-				//Dirt travels downwards and forms piles when it hits something solid
-			break;
+				if (hit && hit->get_stationary()) {
+					lifetime = 0;
+				}
+				else if (!hit) {
+					row = next_row;
+					col = next_col;
+				}
+				break;
 
 			case ParticleType::EARTH:
-				//implement code for the lightning effect
 				//Dirt travels downwards and froms piles when it hits something
 			break;
 
