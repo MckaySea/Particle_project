@@ -1,9 +1,21 @@
-#include "/public/colors.h"
 #include "../include/Particle.h"
 #include "../include/World.h"
+#include <cstdlib>
 using namespace std;
 
-Particle::Particle(float r, float c, float xv, float yv, ParticleType t, uint8_t Red, uint8_t Green, uint8_t Blue, bool stat, int life) {
+Particle::Particle() {
+	row = 0;
+	col = 0;
+	x_vel = 0;
+	y_vel = 0;
+	type = ParticleType::AIR;
+	stationary = false;
+	lifetime = 0;
+	color.Red = 255;
+	color.Blue = 255;
+}
+
+Particle::Particle(float r, float c, float xv, float yv, ParticleType t, uint8_t red, uint8_t green, uint8_t blue, bool stat, int life) {
 	row = r;
 	col = c;
 	x_vel = xv;
@@ -11,32 +23,11 @@ Particle::Particle(float r, float c, float xv, float yv, ParticleType t, uint8_t
 	type = t;
 	stationary = stat;
 	lifetime = life;
-	switch(type) {
-		case ParticleType::FIRE:
-			Red = 255; Green = 0; Blue = 0;
-			break;
-		case ParticleType::WATER:
-			Red = 0; Green = 100; Blue = 255;
-			break;
-		case ParticleType::EARTH:
-			Red = 139; Green = 69; Blue = 19;
-			break;
-		case ParticleType::AIR:
-			Red = 200; Green = 255; Blue = 255;
-			break;
-		case ParticleType::DUST:
-			Red = 210; Green = 180; Blue = 140;
-			break;
-		case ParticleType::LIGHTNING:
-			Red = 255; Green = 255; Blue = 0;
-			break;
-		case ParticleType::DIRT:
-			Red = 101; Green = 67; Blue = 33;
-			break;
-		default:
-			Red = 255; Green = 255; Blue = 255;
-	}
+	color.Red = red;
+	color.Green = green;
+	color.Blue = blue;
 }
+
 int Particle::getLifetime() const {
 	return lifetime;
 }
@@ -83,20 +74,65 @@ uint8_t Particle::getRed() const {
 	return color.Red;
 }
 void Particle::setRed(uint8_t red) {
-	Red = red;
+	color.Red = red;
 }
 uint8_t Particle::getGreen() const {
 	return color.Green;
 }
 void Particle::setGreen(uint8_t green) {
-	Green = green;
+	color.Green = green;
 }
 uint8_t Particle::getBlue() const {
 	return color.Blue;
 }
 void Particle::setBlue(uint8_t blue) {
-	Blue = blue;
+	color.Blue = blue;
 }
+
+void Particle::touch(Particle &other) {
+
+	if (this->type == ParticleType::WATER && other.getType() == ParticleType::FIRE) {
+		this->type = ParticleType::AIR;
+		this->y_vel = -1.0f;
+		this->x_vel = 0.0f;
+		this->color.Red = 200;
+		this->color.Green = 255;
+		this->color.Blue = 255;
+		this->lifetime = 100;
+		this->stationary = false;
+	}
+	else if (this->type == ParticleType::FIRE && other.getType() == ParticleType::WATER) {
+		other.setParticleType(ParticleType::AIR);
+		other.setX_Vel(0.0f);
+		other.setY_Vel(-1.0f);
+		other.setRed(200);
+		other.setGreen(255);
+		other.setBlue(255);
+		other.setLifetime(100);
+		other.set_stationary(false);
+	}
+
+	if (this->type == ParticleType::LIGHTNING && other.getType() == ParticleType::WATER) {
+		other.setParticleType(ParticleType::LIGHTNING);
+		other.setRed(255);
+		other.setGreen(255);
+		other.setBlue(0);
+		other.setLifetime(15);
+		other.setX_Vel(this->x_vel);
+		other.setY_Vel(this->y_vel);
+	}
+	else if (this->type == ParticleType::WATER && other.getType() == ParticleType::LIGHTNING) {
+		this->type = ParticleType::LIGHTNING;
+		this->color.Red = 255;
+		this->color.Green = 255;
+		this->color.Blue = 0;
+		this->lifetime = 15;
+		this->x_vel = other.getX_Vel();
+		this->y_vel = other.getY_Vel();
+	}
+
+}
+
 void Particle::physics(World& world) {
 		if (lifetime > 0) lifetime--;
 		if (!stationary) return;
@@ -104,36 +140,12 @@ void Particle::physics(World& world) {
 
 			case ParticleType::DUST:
 
-				//going str8 downwards
-				/*int smallgrav = 2.45;
-				if(world.at(row + 1, col) == nullptr) {
-					row += smallgrav;
-				} else if(world.at(row + 1, col - 1) == nullptr) { //down left if straight down is blocked
-					row++;
-					col--;
-				} else if(world.at(row + 1, col + 1) == nullptr) { //down right if down left and str8 down are blocked
-					row++;
-					col++;
-				} else if(world.at(row + 1, col) == nullptr) {
-					world.at(row + 1, col)->touch(*this);
-				}
-				*/
-				break;
+			break;
 				//code for dust effect on each particle 
 				//Dust has a small amount of gravity and randomly moves left and right every frame
 			case ParticleType::AIR:
-				if(world.at(row - 1, col) == nullptr) {
-					row--;
-				} else if(world.at(row - 1, col - 1) == nullptr) { //up left if straight up is blocked
-					row--;
-					col--;
-				} else if(world.at(row - 1, col + 1) == nullptr) { //up right if up left and str8 up are blocked
-					row--;
-					col++;
-				} else if(world.at(row - 1, col) == nullptr) {
-					world.at(row - 1, col)->touch(*this);
-				}
-				break;
+
+			break;
 				//code to implement that affects each particle for water
 				//Air moves in a straight line (ignoring gravity) bouncing off solid
 			break;
@@ -167,8 +179,4 @@ void Particle::physics(World& world) {
 			default:
 			break;
 		}
-}
-
-void Particle::touch(Particle& other) {
-
 }
