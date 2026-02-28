@@ -66,31 +66,26 @@ void World::physics() {
 	}
 }
 
-void World::load() { //load world from disk
-	ifstream in;
-	in.open("world_save.txt");
+void World::load(string fileName) { //load world from disk
+	ifstream in(fileName);
 	if (!in.is_open()) return;
 
 	particles.clear();
-	for (auto& row_vec : map) {
-		std::fill(row_vec.begin(), row_vec.end(), 0);
-	}
 
 	int saved_rows, saved_cols;
 	in >> saved_rows >> saved_cols;
+	rows = saved_rows;
+	cols = saved_cols;
+	grid_map.assign(rows, vector<char>(cols, (char)-1));
+	grid_ptrs.assign(rows, vector<Particle *>(cols, nullptr));
 
-	int type_val, r_val, g_val, b_val, stat_val, life;
+	int type_val, r_val, g_val, b_val, life;
+	bool stat_val;
 	float pr, pc, vx, vy;
 
 	while (in >> type_val >> pr >> pc >> vx >> vy >> r_val >> g_val >> b_val >> stat_val >> life) {
-		Particle p(static_cast<ParticleType>(type_val), pr, pc);
-		p.setXVel(vx);
-		p.setYVel(vy);
-		p.setRGB(r_val, g_val, b_val);
-		p.setStationary(stat_val);
-		p.setLifetime(life);
-
-		particles.push_back(p);
+		Particle p(pr, pc vx, vy, static_cast<ParticleType>(type_val), r_val, g_val, b_val, stat_val, life);
+		addParticle(p);
 	}
 	in.close();
 }
