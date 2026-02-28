@@ -1,10 +1,18 @@
-#include "Game.h"
+#include "../include/Game.h"
 #include "/public/colors.h"
+#include <Bridges.h>
+#include <ColorGrid.h>
+#include <chrono>
+#include <iostream>
+#include <sstream>
+#include <unistd.h>
+
+using namespace std;
 
 //just initilizing the world with temp dimensions, should be changed
 Game::Game() : world(20, 20) {
 	auto [r, c] = get_terminal_size();
-	world = world(r - 5, c);
+	world = World(r - 5, c);
 	frame = 0;
 	frame_count = 0;
 }
@@ -20,6 +28,19 @@ void Game::run() {
 	set_mouse_mode(true);
 
 	static ParticleType current_spawn_type = ParticleType::WATER;
+
+	auto mousedown_handler = [this, &is_paused](int row, int col) {
+		if (is_paused) {
+			int r = row - 1;
+			int c = col - 1;
+			if (r >= 0 && r < this->world.getRows() && c >= 0 && c <this->world.getCols()) {
+			
+				Particle *existing = this->world.at(r, c);
+				// left click to place Particle
+				if (existing == nullptr) {
+
+					uint8_t red = 255, green = 255, blue = 255;
+			};
 
 	on_mousedown(mousedown_handler);
 
