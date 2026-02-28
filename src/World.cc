@@ -34,15 +34,34 @@ int World::alive_count() {
 
 void World::physics() {
 	for (auto it = particles.begin(); it != particles.end();) {
+		int old_r = (int)it->getRow();
+		int old_c = (int)it->getCol();
+
 		it->physics(*this);
 	
-		if (it->getRow() < 0 || it->getCol() < 0 || it->getRow() >= rows || it->getCol() >= cols || it->getLifetime() == 0) {
-			particles.erase(it); //if particle moves out of bounds, delete
-		}
-	
-		else {
-			for (const auto& p : particles) {
-				cout << p << " "; }
+		int new_r = (int)it->getRow();
+		int new_c = (int)it->getCol();
+
+		if (new_r < 0 || new_c < 0 || new_r >= rows || new_c >= cols || it->getLifetime() == 0) {
+			if (old_r >= 0 && old_r < rows && old_c >= 0 && old_c < cols) {
+				if (grid_ptrs[old_r][old_c] == &(*it)) {
+					grid_ptrs[old_r][old_c] = nullptr;
+					grid_map[old_r][old_c] = (char)-1;
+				}
+			}
+			it = particles.erase(it);
+		} else {
+			if (old_r != new_r || old_c != new_c) {
+				if (old_r >= 0 && old_r < rows && old_c >= 0 && old_c < cols) {
+					if (grid_ptrs[old_r][old_c] == &(*it)) {
+						grid_ptrs[old_r][old_c] = nullptr;
+						grid_map[old_r][old_c] = (char)-1;
+					}
+				}
+				grid_ptrs[new_r][new_c] = &(*it);
+				grid_map[new_r][new_c] = static_cast<char>(it->getType());
+			}
+			++it;
 		}
 	}
 }
