@@ -11,7 +11,7 @@ class World {
 	int cols;
 	list<Particle> particles;
 	vector<vector<char>> grid_map;
-	vector<vector<ParticleType *>> grid_map;
+	vector<vector<ParticleType *>> grid_ptrs;
 	
 	public:
 	World(int r, int c);
