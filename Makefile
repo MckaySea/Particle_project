@@ -7,6 +7,8 @@ OBJ = $(SRC:.cc=.o)
 EXEC = sim
 
 
+LDLIBS = -lcurl
+
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
