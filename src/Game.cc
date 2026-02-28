@@ -198,7 +198,7 @@ void Game::render() {
 }
 
 void Game::draw_bridges() {
-  bridges::Bridges bridges(1, "REPLACE_WITH_USERNAME", "REPLACE_WITH_API_KEY");
+  bridges::Bridges bridges(1, "FGlez03", "1627533610787");
   bridges.setTitle("Particle Simulation");
 
   int r = world.getRows();
