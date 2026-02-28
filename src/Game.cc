@@ -40,8 +40,66 @@ void Game::run() {
 				if (existing == nullptr) {
 
 					uint8_t red = 255, green = 255, blue = 255;
-			};
+					bool stat = false;
+					int life = 1000;
+					float ix = 0.0f;
+					float iy = 0.0f;
 
+					switch (current_spawn_type) {
+						case ParticleType::FIRE:
+							red = 255;
+							green = 0;
+							blue = 0;
+							stat = true;
+							break;
+						case ParticleType::WATER:
+							red = 0;
+							green = 0;
+							blue = 255;
+							break;
+						case ParticleType::EARTH:
+							red = 139;
+							green = 69;
+							blue = 19;
+							stat = true;
+							life = -1;
+							break;
+						case ParticleType::AIR:
+							red = 200;
+							green = 255;
+							blue = 255;
+							iy = -1.0f;					// Air floats up initially
+							ix = (rand() % 3) - 1.0f; //Random slight drift left or right
+							break;
+						case ParticleType::DUST:
+							red = 210;
+							green = 180;
+							blue = 140;
+							break;
+						case ParticleType::LIGHTNING:
+							red = 255;
+							green = 255;
+							blue = 0;
+							life = 15;
+							iy = 1.0f;				// Shoots downward
+							ix = (rand() % 3) - 1.0f; // Random slight scatter left or right
+							break;
+						case ParticleType::DIRT:
+							red = 101;
+							green = 67;
+							blue = 33;
+							break;
+					}
+
+					Particle p((float)r, (float)c, ix, iy, current_spawn_type, red, green, blue, stat, life);
+					this->world.addParticle(p);
+				} else {
+					// Delete if clicking on existing
+					existing->setLifetime(0);
+				}
+			}
+		}	
+	};
 	on_mousedown(mousedown_handler);
 
 
