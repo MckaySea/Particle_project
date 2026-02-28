@@ -22,7 +22,7 @@ Milestone Checkpoint Due: 2/20/26
 Due Date: 2/25/26
 
 By the due date you need to have:
-1. A Particle class. You must use 'proper' class design. Each particle has:   (PART 1 FINISHED)
+1. A Particle class. You must use 'proper' class design. Each particle has:
 --A position (.row, .col float) which indicates where it is on the screen
 ----No two Particles can be on the same location
 --A velocity (.x_vel and .y_vel float) indicating how many cells per tick it moves
@@ -52,7 +52,7 @@ By the due date you need to have:
 --A .touch() method that gets called when another particle touches it. 
 --Between .physics and .touch you can handle all interactions (fire x water, water x lightning, etc.)
 
-2. A World class that has a 2D grid of Particles (or are empty). World has:        (PART 2 FINISHED)
+2. A World class that has a 2D grid of Particles (or are empty). World has:
 --A size (.rows .cols int) that is the boundary of the world.
 ----Any point which leaves the boundary must be deleted
 --A map (rows x cols in size of chars) which indicates which particle type (or nothing) is at each place in the game world
@@ -92,7 +92,7 @@ By the due date you need to have:
 ----Use clock (or std::chrono) to see how long it has been since the last frame began
 ----Use usleep() to delay execution so you get a guaranteed frame rate of 5 fps or whatever
 
-4. You need to make a BRIDGES output option. When the user hits the "D)raw the World on BRIDGES" command you should render the world on BRIDGES using the ColorGrid class:    (PART 4 FINISHED)
+4. You need to make a BRIDGES output option. When the user hits the "D)raw the World on BRIDGES" command you should render the world on BRIDGES using the ColorGrid class:
 --Read the BRIDGES documentation: https://bridgesuncc.github.io/ and comprehend it
 --Add in your username and API key
 --Make a ColorGrid class and fill it with the colors of the world (or test data)
@@ -152,89 +152,56 @@ Extra credit will be awarded liberally. Add more particle types, compose some mu
 
 
 
-MCKAY SEAMONS:       (23.19%)
--A position (.row, .col float) which indicates where it is on the screen 
--A velocity (.x_vel and .y_vel float) indicating how many cells per tick it moves 
--A .type which must be an enum which indicates if it is air, dust, fire, water, earth, dirt, lightning 
--Color (.r .g .b uint8_t) that should be set initially by its type (fire should be red) but can change 
--A boolean named .stationary that if true means it is solid and does not move/simulate physics  (Note: Implemented as bool moving in your header).
--A .lifetime variable which holds how many frames more it will exist for 
--Member variables must be in the private section, methods in the public section 
--A .physics() method that gets the world map passed in by reference, that runs physics for the particle and updates the world map if it moved. 
--A .touch() method that gets called when another particle touches it.
--A map (rows x cols in size of chars) which indicates which particle type (or nothing) is at each place in the game world 
--A list (must be std::list) of Particles which holds all particles in the world
--An .at(row,col) method that returns a pointer to the Particle at the location row x col in the world (or nullptr if there is no particle there)
--A .physics() method which runs through the list of Particles and runs .physics() on each one
--It has the world (.world World) as a member variable
--A .run() method that starts the game. Your main() function should just be this: Game game; game.run();
--Read the BRIDGES documentation: https://bridgesuncc.github.io/ and comprehend it
-
-
-JACOB DEEL:          (24.64%)
--No two Particles can be on the same location
--Air moves in a straight line (ignoring gravity) bouncing off solid 
--Dust has a small amount of gravity and randomly moves left and right every frame
--Fire is stationary and shoots sparks of lightning in different directions over time
--Water drips down and if it hits something solid it will slide sideways to find the lowest level. Water touching fire turns into air moving upwards
--Earth is always stationary and solid
--Lightning travels in a straight line and stops when it hits something solid. If it touches water, the water turns into lightning. If it hits earth it turns into dirt
--Dirt travels downwards and forms piles when it hits something solid
--So if you turn stationary true on water it will not move even if a spot opens up beneath it
--Stationary Particles can still be destroyed or transformed by other Particles
--Stationary particles have a lifetime of -1 (see below)
--Physics (see below) will decrement it each frame by 1 to a minimum of 0.
--Fire and lightning should have relatively short lifetimes, stone should have a lifetime of -1.
--A lifetime of -1 means infinite lifetime (it will not go away over time)
--Make the usual constructors, getters/setters, and so forth. You should use the Rule of 0
--Physics also decrements .lifetime by one each frame
--Between .physics and .touch you can handle all interactions (fire x water, water x lightning, etc.)
-
-
-Francisco Gonzales:  (21.74%)
--A size (.rows .cols int) that is the boundary of the world.
--Any point which leaves the boundary must be deleted
--If a particle is now out of bounds (no YOU'RE out of bounds) then delete it from the list
--If a particle now has a lifetime of exactly 0, delete it from the list
--A .size() method which returns how many particles are in the world
--A .alive_count() method which returns how many particles with lifetime > 0 are in the world
--A .save() method which saves the state of the world to disk
--A .load() method which loads the state of the world to disk
--It has to handle all input from mouse and keyboard using non-blocking I/O
--Implement a command to load the world from disk
--Implement a command to save the world to disk
--It must work with mouse input
--It must be rendered across the full screen using the color library, using 32 bit colors
--Add in your username and API key
--This will give you a URL that you can use to visualize your world in a browser
 
 
 
-BRANDON MOUANOUTOUA:  (30.43%)
--The world should be initialized with the screen_size as the row and col, but leave some lines open on the bottom of the screen to show the frame count and a helpful list of commands
--A .frame member variable that starts at 0 and counts up by 1 each time physics is run
--Implement a command to start simulating the world
--Implement a command to pause simulating the world
--Implement a command to quit
--Implement a command to increase frame rate
--Implement a command to decrease frame rate
--Implement a command to draw the world on BRIDGES (see below)
--The world should be initialized with the screen_size as the row and col, but leave some lines open on the bottom of the screen to show the frame count and a helpful list of commands
--A .render() method which draws all the particles in the list to the screen using their position and color
--Below the world you should display the frame count and show the commands possible (L)oad S)ave P)ause etc)
--The user must be able to edit the game world by adding and deleting particles while the world is paused
--Simulation should also automatically pause when world.alive_count is 0
--On launch draw a splash screen
--Then go into an infinite loop of: handling user input, running physics, drawing the world, delaying
--It should delay long enough to guarantee a fixed frame rate of 5 fps (you can adjust this number)
--Use clock (or std::chrono) to see how long it has been since the last frame began
--Use usleep() to delay execution so you get a guaranteed frame rate of 5 fps or whatever
--Make a ColorGrid class and fill it with the colors of the world (or test data)
--Add in a call to bridges.setDataStructure() to tell BRIDGES to render the ColorGrid
--Add in a call to bridges.visualize() to send it off to the web site
+McKay Seamons - 
 
+A position (.row, .col float) which indicates where it is on the screen 
 
+A velocity (.x_vel and .y_vel float) indicating how many cells per tick it moves 
 
+A .type which must be an enum which indicates if it is air, dust, fire, water, earth, dirt, lightning 
 
+Color (.r .g .b uint8_t) that should be set initially by its type (fire should be red) but can change 
 
+A boolean named .stationary that if true means it is solid and does not move/simulate physics  (Note: Implemented as bool moving in your header).
+
+A .lifetime variable which holds how many frames more it will exist for 
+
+Member variables must be in the private section, methods in the public section 
+
+Make the usual constructors, getters/setters, and so forth. 
+
+A .physics() method that gets the world map passed in by reference, that runs physics for the particle and updates the world map if it moved. 
+
+A .touch() method that gets called when another particle touches it. 
+
+A size (.rows .cols int) that is the boundary of the world. 
+
+A map (rows x cols in size of chars) which indicates which particle type (or nothing) is at each place in the game world 
+
+A list (must be std::list) of Particles which holds all particles in the world 
+
+An .at(row,col) method that returns a pointer to the Particle at the location row x col in the world (or nullptr if there is no particle there) 
+
+A .physics() method which runs through the list of Particles and runs .physics() on each one 
+
+A .size() method which returns how many particles are in the world 
+
+A .alive_count() method which returns how many particles with lifetime > 0 are in the world 
+
+A .save() method which saves the state of the world to disk 
+
+A .load() method which loads the state of the world to disk 
+
+It has the world (.world World) as a member variable 
+
+A .frame member variable that starts at 0 and counts up by 1 each time physics is run 
+
+A .render() method which draws all the particles in the list to the screen using their position and color 
+
+A .run() method that starts the game. 
+
+Your main() function should just be this: Game game; game.run();
 

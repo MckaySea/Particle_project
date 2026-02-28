@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude -o2 -g
 
 SRC = src/main.cc src/Particle.cc src/World.cc src/Game.cc
 OBJ = $(SRC:.cc=.o)
-EXEC = sim
+EXEC = a.out
 
 
 LDLIBS = -lcurl
@@ -18,4 +18,4 @@ src/%.o: src/%.cc
 		$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-		rm -f src/*.o (EXEC)
+		rm -f src/*.o $(EXEC)

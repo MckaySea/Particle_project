@@ -2,28 +2,30 @@
 
 #include "Particle.h"
 #include <list>
-#include <vector>
 #include <string>
-using namespace std;
-class World {
-	private:
-	int rows;
-	int cols;
-	list<Particle> particles;
-	vector<vector<char>> grid_map;
-	vector<vector<ParticleType *>> grid_ptrs;
-	
-	public:
-	World(int r, int c);
-	Particle* at(int r, int c); //should return nullptr if empty
-	int size();		//total particles
-	int alive_count(); //particles with a lifetime of more than 0
-	void physics();
-	void save(string fileName);
-	void load(string fileName);
+#include <vector>
 
-	int getRows() const { return rows; }
-	int getCols() const { return cols; }
-	void addParticle(const Particle &p);
-	const list<Particle> &getParticles() const { return particles; }
+using namespace std;
+
+class World {
+private:
+  int rows;
+  int cols;
+  list<Particle> particles;
+  vector<vector<char>> grid_map;
+  vector<vector<Particle *>> grid_ptrs;
+
+public:
+  World(int r, int c);
+  Particle *at(int r, int c); // return nullptr if empty
+  int size();
+  int alive_count(); // particles with a lifetime of more than 0
+  void physics();
+  void save(string fileName);
+  void load(string fileName);
+
+  int getRows() const { return rows; }
+  int getCols() const { return cols; }
+  void addParticle(const Particle &p);
+  const list<Particle> &getParticles() const { return particles; }
 };

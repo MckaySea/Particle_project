@@ -1,34 +1,35 @@
 #pragma once
-#include  <cstdint>
+#include <cstdint>
+
 enum class ParticleType {
-		AIR,
-		DUST,
-		FIRE,
-		WATER,
-		EARTH,
-		DIRT,
-		LIGHTNING
-
+	AIR,
+	DUST,
+	FIRE,
+	WATER,
+	EARTH,
+	DIRT,
+	LIGHTNING
 };
-class World;
-class Particle {
 
-	private:
-	float x_vel,y_vel; //velocity
-	float col, row;    //position
+class World;
+
+class Particle {
+private:
+	float x_vel, y_vel; // velocity (cells per tick)
+	float col, row;    // position
 	ParticleType type;
 
 	struct Color {
-	uint8_t Red, Green, Blue;
+		uint8_t Red, Green, Blue;
 	} color;
+
 	bool stationary;
-	int lifetime;   //kerney said use -1 for infinite
-	int gravity;
+	int lifetime;   // -1 for infinite
 
-	public:
-
+public:
 	Particle();
-	Particle(float r, float c, float xv, float yv, ParticleType t,uint8_t red, uint8_t green, uint8_t blue, bool stat, int life);
+	Particle(float r, float c, float xv, float yv, ParticleType t, uint8_t red, uint8_t green, uint8_t blue, bool stat, int life);
+	
 	float getRow() const;
 	void setRow(float r);
 	float getCol() const;
@@ -50,9 +51,7 @@ class Particle {
 	int getLifetime() const;
 	void setLifetime(int life);
 	
-
-	//core logic stuff, i forward declared world to pass it as a reference so we can cehck surrondings
+	// core logic
 	void physics(World& world);
 	void touch(Particle& other);
-
 };
