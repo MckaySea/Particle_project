@@ -1,19 +1,20 @@
 #include "../include/World.h"
 #include "../include/Particle.h"
 #include <iostream>
-#include <list>
 #include <fstream>
 using namespace std;
 
 World::World(int r, int c) {
 	rows = r;
 	cols = c;
+	grid_map.assign(r, vector<char>(c, (char)-1));
+	grid_ptrs.assign(r, vector<Particle *>(c, nullptr));
+}
 
-	for (auto it = particles.begin(); it != particles.end();) {
-		if (it->getRow() < 0 || it->getCol() < 0 || it->getRow() >= rows || it->getCol() >= cols) {
-			particles.erase(it); //any point which leaves boundary gets deleted
-		 }
-	}
+Particle *World::at(int r, int c) {
+	if (r < 0 || r >= rows || c < 0 || c >= cols)
+		return nullptr;
+	return grid_ptrs[r][c];
 }
 
 int World::size() {
@@ -24,12 +25,10 @@ int World::alive_count() {
 	int count = 0;
 
 	for (const auto& p : particles) {
-
-		if (p.getLifetime() > 0) {
+		if (p.getLifetime() > 0 || p.getLifetime() == -1) {
 			count++;
 		}
 	}
-	
 	return count;
 }
 
