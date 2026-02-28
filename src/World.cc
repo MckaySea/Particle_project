@@ -90,20 +90,20 @@ void World::load(string fileName) { //load world from disk
 	in.close();
 }
 
-void World::save() { //save world to disk
-	ofstream out;
-	out.open("world_save.txt");
+void World::save(string fileName) { //save world to disk
+	ofstream out(fileName);
 	if (!out.is_open()) return;
 
 	out << rows << " " << cols << "\n";
 
-	for (const auto& p : particles) {
+	for (const auto &p : particles) {
 		out << static_cast<int>(p.getType()) << " " 
 			<< p.getRow() << " " << p.getCol() << " "
-			<< static_cast<int>(p.getR()) << " "
-			<< static_cast<int>(p.getG()) << " "
-			<< static_cast<int>(p.getB()) << " "
-			<< p.getStationary() << " "
+			<< p.getX_Vel() << " " << p.getY_Vel() << " "
+			<< static_cast<int>(p.getRed()) << " "
+			<< static_cast<int>(p.getGreen()) << " "
+			<< static_cast<int>(p.getBlue()) << " "
+			<< p.get_stationary() << " "
 			<< p.getLifetime() << "\n";
 	}
 	out.close();
