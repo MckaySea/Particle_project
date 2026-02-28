@@ -102,7 +102,6 @@ void Game::run() {
 	};
 	on_mousedown(mousedown_handler);
 
-
 	clearscreen();
 	movecursor(world.getRows() / 2, world.getCols() / 2 - 15);
 	cout << "Welcome to Particle Sim! Press any key to start.";
@@ -118,26 +117,29 @@ void Game::run() {
 		} else if(input == 'p' || input == 'P'){
 			is_paused = !is_paused;
 		} else if(input == 'f' || input == 'F'){ //speed up frame rate
-			frame_count++;
+			target_fps++;
 		} else if (input == 's' || input == 'S'){ //slow down frame rate
-			frame_count--;
+			target_fps--;
 			if(target_fps < 1)
 				target_fps = 1;
 		} else if (input == 'l' || input == 'L'){ // load the world from disk
 			world.load("world_save.txt");
 		} else if (input == 'm' || input == 'M' || input == 'w' || input == 'W'){ // save to disk
 			world.save("world_save.txt");
+		} else if (input == 'c' || input == 'C') { // cycle Particle
+			int next_type = (static_cast<int>(current_spawn_type) + 1) % 7;
+			current_spawn_type = static_cast<ParticleType>(next_type);
 		} else if (input == 'd' || input 'D'){
 			draw_bridges();
 		}
 
 		if(!is_paused){
-			if(world.alive_count() == 0){
+			if(world.alive_count() == 0) {
 				is_paused = true;
 			} else {
 				world.physics();
 			}
-			frame_count++;
+			frame++;
 		}
 
 		stringstream ss;
@@ -145,7 +147,7 @@ void Game::run() {
 		for(const auto &p : world.getParticles()){
 			int r = (int)p.getRow();
 			int c = (int)p.getCol();
-			if(r >= 0 && r < world.getRows() && c >= 0 && c < world.getCol()){
+			if (r >= 0 && r < world.getRows() && c >= 0 && c < world.getCol()) {
 				ss << "\033["<< r + 1 << ";" << c + 1 << "H";
 				ss << "\033[48;2;" <<  (int)p.getRed() << ";" << (int)p.getGreen() << ";" << (int)p.getBlue() << 'm';
 				ss << "\033[0m";
@@ -154,14 +156,14 @@ void Game::run() {
 
 		ss << "\033[" << world.getRows() + 2 << ";1H";
 		ss << "\033[0m";
-		ss << "Frame: " << frame << " | Alive: " << world.alive_count() << " | Target FPS: " << target fps << " | Status: " <<(is_paused ? "PAUSED" : "RUNNING") << " ";
+		ss << "Frame: " << frame << " | Alive: " << world.alive_count() << " | Target FPS: " << target_fps << " | Status: " <<(is_paused ? "PAUSED" : "RUNNING") << "          ";
 		ss << "\033[" << world.getRows() + 3  << ";1H";
-		ss << "Commands: (P)ause | (Q)uit | (C)ycle Element | (L)oad | Sa(v)e(M) |" "(F)aster | (Slower | (D)raw";
+		ss << "Commands: (P)ause | (Q)uit | (C)ycle Element | (L)oad | Sa(v)e(M) | (F)aster | (Slower | (D)raw";
 
 		cout << ss.str() << flush;
 
 		auto end_time = chrono::steady_clock::now();
-		auto elapsed = chrono::duration_cast(end_time - start_time).count();
+		auto elapsed = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
 		int expected_delay = 1000000 / target_fps;
 		if(elapsed < expected_delay){
 			usleep(expected_delay - elapsed);
@@ -171,7 +173,7 @@ void Game::run() {
 	set_raw_mode(false);
 	set_cursor_mode(true);
 	set_mouse_mode(false);
-	restcolor();
+	resetcolor();
 	clearscreen();
  }
 
@@ -179,9 +181,9 @@ void Game::render(){
 
 }
 
-void Game draw_bridges(){
+void Game::draw_bridges(){
 	bridges::Bridges bridges(1, "REPLACE_WITH_USERNAME", "REPLACE_WITH_API_KEY");
-	bridges.setTitles("Particle Simulation");
+	bridges.setTitle("Particle Simulation");
 
 	int r = world.getRows();
 	int c = world.getCols();
@@ -193,7 +195,7 @@ void Game draw_bridges(){
 	for(const auto &p : world.getParticles()){
 		int pr = (int)p.getRow();
 		int pc = (int)p.getCol();
-		if(Pr >= 0 && pr < r && pc >= 0 && pc , c){
+		if (pr >= 0 && pr < r && pc >= 0 && pc < c) {
 			cg.set(pr, pc, bridges::Color(p.getRed(), p.getGreen(), p.getBlue()));
 		}
 	}
