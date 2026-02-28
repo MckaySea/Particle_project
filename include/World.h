@@ -10,7 +10,8 @@ class World {
 	int rows;
 	int cols;
 	list<Particle> particles;
-	vector<vector<ParticleType>> grid_map;
+	vector<vector<char>> grid_map;
+	vector<vector<ParticleType *>> grid_map;
 	
 	public:
 	World(int r, int c);
@@ -21,4 +22,8 @@ class World {
 	void save(string fileName);
 	void load(string fileName);
 
+	int getRows() const { return rows; }
+	int getCols() const { return cols; }
+	void addParticle(const Particle &p);
+	const list<Particle> &getParticles() const { return particles; }
 };
