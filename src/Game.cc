@@ -28,14 +28,16 @@ void Game::run() {
 
   // Track which element is currently selected for spawning
   static ParticleType current_spawn_type = ParticleType::WATER;
-
+  //this lamda basically defines whats happens when you click on the screen, 
   auto mousedown_handler = [this, &is_paused](int row, int col) {
+    //only spawn particles when they click and the games paused
     if (is_paused) {
       int r = row - 1;
       int c = col - 1;
+      //boundary check to make sure click is inside th world
       if (r >= 0 && r < this->world.getRows() && c >= 0 &&
           c < this->world.getCols()) {
-
+        //check to see if a particle alrdy exists where we're clicking
         Particle *existing = this->world.at(r, c);
         // Left click to place Particle
         if (existing == nullptr) {
@@ -91,7 +93,7 @@ void Game::run() {
             blue = 33;
             break;
           }
-
+          //creating the particle object and adding it the world storage
           Particle p((float)r, (float)c, ix, iy, current_spawn_type, red, green,
                      blue, stat, life);
           this->world.addParticle(p);
@@ -130,13 +132,13 @@ void Game::run() {
     } else if (input == 'm' || input == 'M' || input == 'w' ||
                input == 'W') { // save to disk
       world.save("world_save.txt");
-    } else if (input == 'c' || input == 'C') { // cycle particle
+    } else if (input == 'c' || input == 'C') { // cycle particle through avalible ones 0-6
       int next_type = (static_cast<int>(current_spawn_type) + 1) % 7;
       current_spawn_type = static_cast<ParticleType>(next_type);
     } else if (input == 'd' || input == 'D') {
       draw_bridges();
     }
-
+    //update phyiscs only if its not paused
     if (!is_paused) {
       if (world.alive_count() == 0) {
         is_paused = true;
@@ -150,20 +152,23 @@ void Game::run() {
     // ( this is legit the only solution that i found worked but ill ask kerney
     // later should be fine tho)
     stringstream ss;
-    ss << "\033[2J\033[1;1H"; // clear screen and move top-left
-
+    ss << "\033[2J\033[1;1H"; // clear screen and move top-left (this is an ANSI escape code: clear screen and move cursor to top-left)
+      //loop thru all particles and draw them
     for (const auto &p : world.getParticles()) {
       int r = (int)p.getRow();
       int c = (int)p.getCol();
       if (r >= 0 && r < world.getRows() && c >= 0 && c < world.getCols()) {
+        // Mmve cursor to particle position.
         ss << "\033[" << r + 1 << ";" << c + 1 << "H";
+        // set bg to particle types color
         ss << "\033[48;2;" << (int)p.getRed() << ";" << (int)p.getGreen() << ";"
            << (int)p.getBlue() << "m";
-        ss << " \033[0m"; // colored space
+        ss << " \033[0m"; // // prints a space (the pxel) and reset color.
       }
     }
 
     // rendering UI below the world
+    // text at bottom of screen
     ss << "\033[" << world.getRows() + 2 << ";1H";
     ss << "\033[0m"; // RESET
     ss << "Frame: " << frame << " | Alive: " << world.alive_count()
@@ -173,8 +178,8 @@ void Game::run() {
     ss << "Commands: (P)ause | (Q)uit | (C)ycle Element | (L)oad | Sa(v)e(M) | "
           "(F)aster | (S)lower | (D)raw                  ";
 
-    cout << ss.str() << flush;
-
+    cout << ss.str() << flush; // dumps the entire buffer to the terminal at once
+    // sleep if we processed frame faster than the targeted speed
     auto end_time = chrono::steady_clock::now();
     auto elapsed =
         chrono::duration_cast<chrono::microseconds>(end_time - start_time)
@@ -207,7 +212,7 @@ void Game::draw_bridges() {
     return;
 
   bridges::ColorGrid cg(r, c, bridges::Color("black"));
-
+// fills the grid with the current particle colors
   for (const auto &p : world.getParticles()) {
     int pr = (int)p.getRow();
     int pc = (int)p.getCol();
