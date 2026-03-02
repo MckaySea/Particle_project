@@ -79,6 +79,7 @@ void World::physics() {
       if (old_r != new_r || old_c != new_c) {
         //clear the old grid cell
         if (old_r >= 0 && old_r < rows && old_c >= 0 && old_c < cols) {
+          //gotta convert the iterator into a raw pointer so we can compare it to the ptr stored in our 2d grid
           if (grid_ptrs[old_r][old_c] == &(*it)) {
             grid_ptrs[old_r][old_c] = nullptr;
             grid_map[old_r][old_c] = (char)-1;
